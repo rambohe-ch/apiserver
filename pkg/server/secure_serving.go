@@ -23,6 +23,8 @@ import (
 	"net"
 	"net/http"
 	"time"
+	"log"
+	"os"
 
 	"golang.org/x/net/http2"
 	"k8s.io/klog"
@@ -145,6 +147,7 @@ func (s *SecureServingInfo) Serve(handler http.Handler, shutdownTimeout time.Dur
 		Handler:        handler,
 		MaxHeaderBytes: 1 << 20,
 		TLSConfig:      tlsConfig,
+		ErrorLog:     log.New(NewHandshakeFilterWriter(os.Stderr), "", log.LstdFlags),
 	}
 
 	// At least 99% of serialized resources in surveyed clusters were smaller than 256kb.
